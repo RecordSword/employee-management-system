@@ -1,5 +1,13 @@
 const mysql = require("mysql");
-const inquirer = require("inquirer")
+const inquirer = require("inquirer");
+const questions = require("./lib/questions");
+
+const initialQuestions = questions.initialQuestions;
+const addingQuestions = questions.addingQuestions;
+const viewingQuestions = questions.viewingQuestions;
+const updatingQuestions = questions.updatingQuestions;
+const deletingQuestions = questions.deletingQuestions;
+
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -22,58 +30,36 @@ connection.connect(function (err) {
 });
 
 function start() {
-  inquirer.prompt({
-    message: "Welcome to RecordSword Company!",
-    type: "list",
-    name: "selection",
-    choices: [
-      "Add",
-      "View",
-      "Update",
-      "Delete",
-      "Exit"
-    ],
-  })
-    .then(function (answer) {
-      console.log(`You are going to ${result.selection}`);
+  inquirer.prompt(initialQuestions)
+    .then(async function (answer) {
+      console.log(`You are going to ${answer.selection}`);
 
-      switch (result.selection) {
+      switch (answer.selection) {
         case "Add":
-          addType();
+          await addType();
           break;
 
         case "View":
-          viewType();
+          await viewType();
           break;
 
         case "Update":
-          updateType();
+          await updateType();
           break;
 
         case "Delete":
-          deleteType();
+          await deleteType();
           break;
 
         default:
-          exit();
+          await exit();
       }
     });
 }
 
-addType()
-{
-  inquirer.prompt({
-    message: "What would you like to create?",
-    type: "list",
-    name: "addSelection",
-    choices: [
-      "Add Employee",
-      "Add Department",
-      "Add Role",
-      "Exit"
-    ],
-  }).then(function (answer) {
-    switch (result.addSelection) {
+function addType() {
+  inquirer.prompt(addingQuestions).then(function (answer) {
+    switch (answer.addSelection) {
       case "Add Employee":
         addEmployee();
         break;
@@ -92,113 +78,71 @@ addType()
   });
 }
 
-viewType()
-{
-  {
-    inquirer.prompt({
-      message: "What would you like to view?",
-      type: "list",
-      name: "viewSelection",
-      choices: [
-        "View Employee",
-        "View Department",
-        "View Role",
-        "Exit"
-      ],
-    }).then(function (answer) {
-      switch (result.viewSelection) {
-        case "View Employee":
-          viewEmployee();
-          break;
+function viewType() {
+  inquirer.prompt(viewingQuestions).then(function (answer) {
+    switch (answer.viewSelection) {
+      case "View Employee":
+        viewEmployee();
+        break;
 
-        case "View Department":
-          viewDepartment();
-          break;
+      case "View Department":
+        viewDepartment();
+        break;
 
-        case "View Role":
-          viewRole();
-          break;
+      case "View Role":
+        viewRole();
+        break;
 
-        default:
-          exit();
-      }
-    });
-  }
-}
-
-updateType()
-{
-  {
-    {
-      inquirer.prompt({
-        message: "What would you like to update?",
-        type: "list",
-        name: "updateSelection",
-        choices: [
-          "Update Employee",
-          "Update Department",
-          "Update Role",
-          "Exit"
-        ],
-      }).then(function (answer) {
-        switch (result.updateSelection) {
-          case "Update Employee":
-            updateEmployee();
-            break;
-
-          case "Update Department":
-            updateDepartment();
-            break;
-
-          case "Update Role":
-            updateRole();
-            break;
-
-          default:
-            exit();
-        }
-      });
+      default:
+        exit();
     }
-  }
+  });
 }
 
-deleteType()
-{
-  {
-    {
-      inquirer.prompt({
-        message: "What would you like to delete?",
-        type: "list",
-        name: "deleteSelection",
-        choices: [
-          "Delete Employee",
-          "Delete Department",
-          "Delete Role",
-          "Exit"
-        ],
-      }).then(function (answer) {
-        switch (result.deleteSelection) {
-          case "Delete Employee":
-            deleteEmployee();
-            break;
+function updateType() {
+  inquirer.prompt(updatingQuestions).then(function (answer) {
+    switch (answer.updateSelection) {
+      case "Update Employee":
+        updateEmployee();
+        break;
 
-          case "Delete Department":
-            deleteDepartment();
-            break;
+      case "Update Department":
+        updateDepartment();
+        break;
 
-          case "Delete Role":
-            deleteRole();
-            break;
+      case "Update Role":
+        updateRole();
+        break;
 
-          default:
-            exit();
-        }
-      });
+      default:
+        exit();
     }
-  }
+  });
+}
+
+function deleteType() {
+  inquirer.prompt(deletingQuestions).then(function (answer) {
+    switch (answer.deleteSelection) {
+      case "Delete Employee":
+        deleteEmployee();
+        break;
+
+      case "Delete Department":
+        deleteDepartment();
+        break;
+
+      case "Delete Role":
+        deleteRole();
+        break;
+
+      default:
+        exit();
+    }
+  });
 }
 
 
-exit() {
-
+function exit() {
+  connection.end();
+  process.exit();
 }
