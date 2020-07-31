@@ -1,4 +1,5 @@
-var mysql = require("mysql");
+const mysql = require("mysql");
+const inquirer = require("inquirer")
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -10,83 +11,194 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Bootcamp2020",
   database: "employee_db"
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
-  createProduct();
+  start();
 });
 
-function createProduct() {
-  console.log("Inserting a new product...\n");
-  var query = connection.query(
-    "INSERT INTO products SET ?",
-    {
-      flavor: "Rocky Road",
-      price: 3.0,
-      quantity: 50
-    },
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " product inserted!\n");
-      // Call updateProduct AFTER the INSERT completes
-      updateProduct();
-    }
-  );
-
-  // logs the actual query being run
-  console.log(query.sql);
-}
-
-function updateProduct() {
-  console.log("Updating all Rocky Road quantities...\n");
-  var query = connection.query(
-    "UPDATE products SET ? WHERE ?",
-    [
-      {
-        quantity: 100
-      },
-      {
-        flavor: "Rocky Road"
-      }
+function start() {
+  inquirer.prompt({
+    message: "Welcome to RecordSword Company!",
+    type: "list",
+    name: "selection",
+    choices: [
+      "Add",
+      "View",
+      "Update",
+      "Delete",
+      "Exit"
     ],
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " products updated!\n");
-      // Call deleteProduct AFTER the UPDATE completes
-      deleteProduct();
-    }
-  );
+  })
+    .then(function (answer) {
+      console.log(`You are going to ${result.selection}`);
 
-  // logs the actual query being run
-  console.log(query.sql);
+      switch (result.selection) {
+        case "Add":
+          addType();
+          break;
+
+        case "View":
+          viewType();
+          break;
+
+        case "Update":
+          updateType();
+          break;
+
+        case "Delete":
+          deleteType();
+          break;
+
+        default:
+          exit();
+      }
+    });
 }
 
-function deleteProduct() {
-  console.log("Deleting all strawberry icecream...\n");
-  connection.query(
-    "DELETE FROM products WHERE ?",
-    {
-      flavor: "strawberry"
-    },
-    function(err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " products deleted!\n");
-      // Call readProducts AFTER the DELETE completes
-      readProducts();
-    }
-  );
-}
+addType()
+{
+  inquirer.prompt({
+    message: "What would you like to create?",
+    type: "list",
+    name: "addSelection",
+    choices: [
+      "Add Employee",
+      "Add Department",
+      "Add Role",
+      "Exit"
+    ],
+  }).then(function (answer) {
+    switch (result.addSelection) {
+      case "Add Employee":
+        addEmployee();
+        break;
 
-function readProducts() {
-  console.log("Selecting all products...\n");
-  connection.query("SELECT * FROM products", function(err, res) {
-    if (err) throw err;
-    // Log all results of the SELECT statement
-    console.log(res);
-    connection.end();
+      case "Add Department":
+        addDepartment();
+        break;
+
+      case "Add Role":
+        addRole();
+        break;
+
+      default:
+        exit();
+    }
   });
+}
+
+viewType()
+{
+  {
+    inquirer.prompt({
+      message: "What would you like to view?",
+      type: "list",
+      name: "viewSelection",
+      choices: [
+        "View Employee",
+        "View Department",
+        "View Role",
+        "Exit"
+      ],
+    }).then(function (answer) {
+      switch (result.viewSelection) {
+        case "View Employee":
+          viewEmployee();
+          break;
+
+        case "View Department":
+          viewDepartment();
+          break;
+
+        case "View Role":
+          viewRole();
+          break;
+
+        default:
+          exit();
+      }
+    });
+  }
+}
+
+updateType()
+{
+  {
+    {
+      inquirer.prompt({
+        message: "What would you like to update?",
+        type: "list",
+        name: "updateSelection",
+        choices: [
+          "Update Employee",
+          "Update Department",
+          "Update Role",
+          "Exit"
+        ],
+      }).then(function (answer) {
+        switch (result.updateSelection) {
+          case "Update Employee":
+            updateEmployee();
+            break;
+
+          case "Update Department":
+            updateDepartment();
+            break;
+
+          case "Update Role":
+            updateRole();
+            break;
+
+          default:
+            exit();
+        }
+      });
+    }
+  }
+}
+
+deleteType()
+{
+  {
+    {
+      inquirer.prompt({
+        message: "What would you like to delete?",
+        type: "list",
+        name: "deleteSelection",
+        choices: [
+          "Delete Employee",
+          "Delete Department",
+          "Delete Role",
+          "Exit"
+        ],
+      }).then(function (answer) {
+        switch (result.deleteSelection) {
+          case "Delete Employee":
+            deleteEmployee();
+            break;
+
+          case "Delete Department":
+            deleteDepartment();
+            break;
+
+          case "Delete Role":
+            deleteRole();
+            break;
+
+          default:
+            exit();
+        }
+      });
+    }
+  }
+}
+
+
+exit() {
+
 }
