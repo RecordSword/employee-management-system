@@ -7,7 +7,10 @@ const addingQuestions = questions.addingQuestions;
 const viewingQuestions = questions.viewingQuestions;
 const updatingQuestions = questions.updatingQuestions;
 const deletingQuestions = questions.deletingQuestions;
-
+const addEmployee= questions.addEmployee
+const addDepartment= questions.addDepartment
+const addRole= questions.addRole
+const updateEmployeeRole= questions.updateEmployeeRole
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -99,19 +102,60 @@ function viewType() {
   });
 }
 
+
+function addRole() {  
+return choicesArray;
+}
+  .then(function (answer) {
+    const department = answer.departmentName;
+    connection.query('SELECT * FROM DEPARTMENT', function (err, res) {
+
+      if (err) throw (err);
+      let filteredDept = res.filter(function (res) {
+        return res.name == department;
+      }
+      )
+      let id = filteredDept[0].id;
+      let query = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+      let values = [answer.title, parseInt(answer.salary), id]
+      console.log(values);
+      connection.query(query, values,
+        function (err, res, fields) {
+          console.log(`You have added this role: ${(values[0]).toUpperCase()}.`)
+        })
+      viewRoles()
+    })
+  })
+}]
+
+
+function viewEmployee() {
+  connection.query("SELECT * FROM employee", function (err, data) {
+      console.table(data);
+      start();
+  })
+}
+
+function viewDepartment() {
+  connection.query("SELECT * FROM department", function (err, data) {
+      console.table(data);
+      start();
+  })
+}
+
 function updateType() {
   inquirer.prompt(updatingQuestions).then(function (answer) {
     switch (answer.updateSelection) {
-      case "Update Employee":
-        updateEmployee();
-        break;
+      // case "Update Employee":
+      //   updateEmployee();
+      //   break;
 
-      case "Update Department":
-        updateDepartment();
-        break;
+      // case "Update Department":
+      //   updateDepartment();
+      //   break;
 
-      case "Update Role":
-        updateRole();
+      case "Update Employee Role":
+        updateEmployeeRole();
         break;
 
       default:
@@ -119,6 +163,17 @@ function updateType() {
     }
   });
 }
+
+function updateEmployeeRole() {
+
+  .then(function (response) {
+    connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [response.role_id, response.name], function (err, data) {
+      console.table(data);
+    })
+    askQuestions();
+  })
+}
+
 
 function deleteType() {
   inquirer.prompt(deletingQuestions).then(function (answer) {
@@ -140,7 +195,6 @@ function deleteType() {
     }
   });
 }
-
 
 function exit() {
   connection.end();
